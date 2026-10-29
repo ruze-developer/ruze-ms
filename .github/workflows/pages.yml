@@ -1,7 +1,10 @@
-name: Deploy ruze to GitHub Pages
+name: Deploy listo to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'listo/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,16 +20,30 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Prepare website
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare listo site
+        shell: bash
+        env:
+          LISTO_URL: ${{ vars.LISTO_SUPABASE_URL }}
+          LISTO_KEY: ${{ vars.LISTO_SUPABASE_KEY }}
         run: |
-          mkdir -p public
-          cp index.html styles.css firebase-app.js firebase-config.js favicon.svg public/
-          touch public/.nojekyll
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          mkdir -p _site
+          cp -R listo/. _site/
+          rm -f _site/supabase-schema.sql _site/README.md
+          touch _site/.nojekyll
+          if [[ -n "$LISTO_URL" && -n "$LISTO_KEY" ]]; then
+            printf "window.LISTO_SUPABASE_URL=%s;\nwindow.LISTO_SUPABASE_KEY=%s;\n" \
+              "$(printf '%s' "$LISTO_URL" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')" \
+              "$(printf '%s' "$LISTO_KEY" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')" \
+              > _site/supabase-config.js
+          fi
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: public
-      - name: Deploy
+          path: _site
+      - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v4
