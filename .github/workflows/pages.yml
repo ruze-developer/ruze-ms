@@ -5,8 +5,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pages: write
+  id-token: write
 concurrency:
-  group: pages
+  group: github-pages
   cancel-in-progress: true
 jobs:
   deploy:
@@ -14,19 +16,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - name: Prepare public files
+      - name: Prepare website
         run: |
-          mkdir _site
-          cp index.html styles.css app.js favicon.svg _site/
+          mkdir -p public
+          cp index.html styles.css app.js config.js favicon.svg public/
+          touch public/.nojekyll
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: public
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
