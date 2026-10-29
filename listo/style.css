@@ -10,3 +10,10 @@
 
 /* Product details and payment readiness */
 .product-detail{max-width:700px}.product-detail h1{font-size:clamp(26px,4vw,46px);overflow-wrap:anywhere;margin:26px 0 16px}.product-price{font-size:28px;margin:26px 0}.product-description{font:19px 'Pixelify Sans',monospace;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;color:var(--muted)}.payment-notice{border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:36px;background:var(--surface);font:17px 'Pixelify Sans',monospace;line-height:1.5}.product-link{display:inline-block;margin-top:16px;font-size:11px;text-decoration:underline;text-underline-offset:4px}
+
+/* Legal pages, global footer and cookie notice */
+.legal-footer{border-top:1px solid var(--line);padding:24px 30px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;color:var(--muted);font:13px 'Pixelify Sans',monospace}
+.legal-footer nav{display:flex;flex-wrap:wrap;gap:12px 20px}.legal-footer a:hover,.cookie-banner a:hover{text-decoration:underline;text-underline-offset:3px}
+.legal-content{max-width:850px}.legal-content h2{font-size:17px;font-weight:500;margin:36px 0 12px}.legal-content p{font:18px/1.65 'Pixelify Sans',monospace;color:var(--muted)}.legal-content .legal-note{border-top:1px solid var(--line);padding-top:24px;margin-top:40px}
+.cookie-banner{position:fixed;bottom:18px;left:18px;right:18px;max-width:920px;margin:auto;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:18px 22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 38px #0005;color:var(--fg)}.cookie-banner p{margin:0;font:16px/1.45 'Pixelify Sans',monospace}.cookie-banner a{text-decoration:underline}.cookie-banner button{flex:none;border:0;border-radius:22px;padding:12px 20px;background:var(--pill);color:var(--pillfg);cursor:pointer;font:11px 'Unbounded',sans-serif}
+@media(max-width:560px){.legal-footer{padding:20px 17px 100px}.cookie-banner{bottom:10px;left:10px;right:10px;flex-direction:column;align-items:stretch;padding:15px}.cookie-banner button{align-self:flex-end}}
