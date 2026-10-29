@@ -5,5 +5,5 @@ window.RUZE_FIREBASE_CONFIG = {
   projectId: "ruze-676767",
   storageBucket: "ruze-676767.firebasestorage.app",
   messagingSenderId: "651824487870",
-  appId: "1:651824487870:web:9530de0384709ae2482def"
+  appId: "1:651824487870:web:c2c151afcc346a5a482def"
 };
