@@ -1,0 +1,1 @@
+(()=>{let theme='dark';try{theme=localStorage.getItem('listo-theme')==='light'?'light':'dark'}catch{}document.documentElement.dataset.theme=theme;window.setListoTheme=(value)=>{const next=value==='light'?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('listo-theme',next)}catch{}window.dispatchEvent(new Event('listo-theme-change'))}})();
