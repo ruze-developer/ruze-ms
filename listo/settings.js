@@ -1,0 +1,1 @@
+const buttons=[...document.querySelectorAll('[data-theme-choice]')];function sync(){buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.themeChoice===document.documentElement.dataset.theme)))}buttons.forEach(b=>b.addEventListener('click',()=>{setListoTheme(b.dataset.themeChoice);sync()}));sync();
