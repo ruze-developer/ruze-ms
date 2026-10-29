@@ -1,0 +1,8 @@
+{
+  "appId": "com.ruze.messenger",
+  "appName": "ruze",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
