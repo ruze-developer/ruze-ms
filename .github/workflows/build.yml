@@ -1,0 +1,49 @@
+name: Build ruze
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: win
+          - os: ubuntu-latest
+            target: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: npm run build:${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruze-${{ matrix.target }}
+          path: dist/*
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - run: npm install
+      - run: mkdir -p www && cp index.html styles.css app.js config.js favicon.svg www/
+      - run: npx cap add android
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruze-android-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
