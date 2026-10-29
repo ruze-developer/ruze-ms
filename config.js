@@ -1,5 +1,5 @@
-// Public Supabase project URL and publishable/anon key. Never put a service_role key here.
+// Public browser credentials. NEVER add a secret/service_role key here.
 window.RUZE_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: ""
+  supabaseUrl: "https://wmyxkcicjvdnlvfmcxvs.supabase.co",
+  supabaseAnonKey: "sb_publishable_R-ZZmorGtEiQ6gmOuWCL9w_vXd47QrE"
 };
