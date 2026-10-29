@@ -1,6 +1,6 @@
 // Firebase implementation for ruze. Activate after configuring Firebase.
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,collection,doc,getDoc,setDoc,addDoc,getDocs,query,where,onSnapshot,serverTimestamp,orderBy,limit} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const $=id=>document.getElementById(id);
 const config=window.RUZE_FIREBASE_CONFIG||{};
@@ -12,6 +12,7 @@ function fail(e){toast(e?.message||'ошибка соединения')}
 if(required.some(k=>!config[k])){$('auth').hidden=true;$('setup').hidden=false;$('setup').innerHTML='<h2>настройка Firebase</h2><p>укажи публичные параметры веб-приложения в firebase-config.js, включи Email/Password Authentication и создай Cloud Firestore с правилами из firestore.rules.</p>'}
 else{
  const app=initializeApp(config);auth=getAuth(app);db=getFirestore(app);
+ getRedirectResult(auth).catch(fail);
  onAuthStateChanged(auth,u=>{user=u;if(!u){cleanup();$('gate').hidden=false;$('shell').hidden=true;$('auth').hidden=false;return}signedIn(u).catch(fail)});
 }
 function cleanup(){if(unsubRooms)unsubRooms();if(unsubMessages)unsubMessages();if(unsubSpaces)unsubSpaces();unsubRooms=unsubMessages=unsubSpaces=null;room=null;space=null}
@@ -23,6 +24,7 @@ function closeRoom(){$('shell').classList.remove('chat-open');$('message').disab
 function openRoom(r){room=r.id;renderRooms();$('room-name').textContent=r.name;$('room-avatar').textContent=r.kind==='channel'?'#':r.name[0]?.toUpperCase();$('room-detail').textContent=r.kind==='channel'?'канал':'личная беседа';$('message').disabled=false;$('send-btn').disabled=false;$('shell').classList.add('chat-open');if(unsubMessages)unsubMessages();unsubMessages=onSnapshot(query(collection(db,'rooms',r.id,'messages'),orderBy('createdAt','desc'),limit(200)),snap=>{if(room!==r.id)return;const host=$('messages');host.replaceChildren();const items=snap.docs.slice().reverse();if(!items.length)host.append(node('div','empty','начни разговор ✳'));for(const d of items){const m=d.data();const box=node('article','message'+(m.senderId===user.uid?' mine':''));box.append(node('strong','',m.senderId===user.uid?'ты':m.senderId.slice(0,8)),node('p','',m.body),node('time','',m.createdAt?.toDate().toLocaleString('ru')||'сейчас'));host.append(box)}host.scrollTop=host.scrollHeight},fail)}
 $('auth').onsubmit=async e=>{e.preventDefault();$('auth-error').textContent='';try{const email=$('email').value.trim(),pass=$('password').value;if(register)await createUserWithEmailAndPassword(auth,email,pass);else await signInWithEmailAndPassword(auth,email,pass)}catch(err){$('auth-error').textContent=err.message}};
 $('toggle').onclick=()=>{register=!register;$('auth-submit').textContent=register?'зарегистрироваться →':'войти →';$('toggle').textContent=register?'уже есть аккаунт? войти':'создать аккаунт'};
+$('google-login').onclick=async()=>{const provider=new GoogleAuthProvider();$('auth-error').textContent='';try{await signInWithPopup(auth,provider)}catch(err){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(err.code)){try{await signInWithRedirect(auth,provider)}catch(e){$('auth-error').textContent=e.message}}else if(err.code!=='auth/popup-closed-by-user'){$('auth-error').textContent=err.message}}};
 $('logout').onclick=()=>signOut(auth).catch(fail);
 $('dm').onclick=()=>{space=null;closeRoom();renderSpaces();loadRooms()};
 $('add-space').onclick=()=>modal('space');
