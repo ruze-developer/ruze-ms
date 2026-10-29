@@ -1,0 +1,33 @@
+name: Package listo ZIP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'listo/**'
+      - '.github/workflows/listo-zip.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create ZIP archive
+        shell: bash
+        run: |
+          cd listo
+          zip -r ../listo.zip . -x '*.DS_Store' -x 'README.md' -x 'supabase-schema.sql' -x 'payment-integration.md' -x 'auth-setup.md'
+
+      - name: Upload listo.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: listo-site
+          path: listo.zip
+          retention-days: 90
+          if-no-files-found: error
